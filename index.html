@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест по JavaScript — 20 вопросов</title>
+<meta name="description" content="Интерактивный тест по JavaScript: история, типы данных, стандарты и экосистема.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%23F7DF1E'/><text x='50' y='72' font-size='56' font-weight='700' text-anchor='middle' font-family='sans-serif'>JS</text></svg>">
+<style>
+:root{
+  --bg:#F3F5F7; --surface:#FFFFFF; --ink:#14161A; --muted:#5B6270; --line:#D5DAE0;
+  --js:#F7DF1E; --ok:#1F7A45; --ok-bg:#E3F4EA; --bad:#B8322A; --bad-bg:#FBE6E4;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171B; --surface:#1F2227; --ink:#F1F2F4; --muted:#A3AAB6; --line:#363B44;
+    --ok:#5FD08B; --ok-bg:#16301F; --bad:#FF8A80; --bad-bg:#3A1C1A;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;min-height:100vh}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.logo{background:var(--js);color:#14161A;font-weight:800;font-size:20px;width:44px;height:44px;display:grid;place-items:center;border-radius:6px;font-family:var(--mono)}
+header h1{font-size:18px;margin:0;font-weight:700}
+header p{margin:0;font-size:14px;color:var(--muted)}
+
+.progress{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;margin-bottom:8px}
+.progress i{height:8px;border-radius:2px;background:var(--line)}
+.progress i.now{background:var(--js);outline:1px solid var(--ink);outline-offset:0}
+.progress i.ok{background:var(--ok)}
+.progress i.bad{background:var(--bad)}
+.meta{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:20px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.question{font-size:21px;line-height:1.35;font-weight:700;margin:0 0 20px}
+.question code,.expl code{font-family:var(--mono);background:var(--bg);padding:1px 6px;border-radius:4px;font-size:.9em}
+
+.options{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.opt{
+  width:100%;display:flex;gap:12px;align-items:flex-start;text-align:left;
+  font:inherit;color:inherit;background:var(--surface);border:2px solid var(--line);
+  border-radius:8px;padding:12px 14px;cursor:pointer;
+  transition:border-color .15s,background-color .15s;
+}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.opt .n{font-family:var(--mono);font-size:13px;min-width:24px;height:24px;border:1px solid var(--line);border-radius:4px;display:grid;place-items:center;color:var(--muted);flex:none;margin-top:1px}
+.opt:disabled{cursor:default}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.ok .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.bad{border-color:var(--bad);background:var(--bad-bg)}
+.opt.bad .n{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt.dim{opacity:.55}
+
+.expl{margin-top:16px;padding:14px;border-left:4px solid var(--js);background:var(--bg);border-radius:0 8px 8px 0;font-size:15px}
+.expl b{display:block;margin-bottom:2px}
+.actions{margin-top:20px;display:flex;justify-content:flex-end}
+.btn{font:inherit;font-weight:700;background:var(--js);color:#14161A;border:2px solid #14161A;border-radius:8px;padding:12px 22px;cursor:pointer}
+.btn:hover{filter:brightness(.95)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--ink)}
+.hint{font-size:13px;color:var(--muted);margin-top:14px}
+
+/* start & result */
+.big{font-size:56px;font-weight:800;line-height:1;margin:0 0 4px;font-family:var(--mono)}
+.big span{color:var(--muted);font-size:28px}
+.verdict{font-size:20px;font-weight:700;margin:0 0 8px}
+.review{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:12px}
+.review li{border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:15px}
+.review .you{color:var(--bad)}
+.review .right{color:var(--ok);font-weight:600}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.start ul{padding-left:20px;margin:12px 0 20px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="logo" aria-hidden="true">JS</div>
+    <div>
+      <h1>Тест по JavaScript</h1>
+      <p>20 вопросов, 4 варианта ответа</p>
+    </div>
+  </header>
+  <div id="app"></div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // c — индекс правильного ответа в массиве a
+  var QUESTIONS = [
+    { q: "Кто создал язык JavaScript?",
+      a: ["Деннис Ритчи", "Брендан Эйх", "Гвидо ван Россум", "Тим Бернерс-Ли"], c: 1,
+      e: "Брендан Эйх разработал язык в компании Netscape Communications всего за несколько дней." },
+    { q: "В каком году появился JavaScript?",
+      a: ["1991", "1993", "1995", "1999"], c: 2,
+      e: "Язык появился в 1995 году в составе браузера Netscape Navigator 2.0." },
+    { q: "Как назывался язык на самом раннем этапе разработки?",
+      a: ["Mocha", "Oak", "Espresso", "Latte"], c: 0,
+      e: "Сначала язык назывался Mocha, затем LiveScript, и только потом JavaScript. Oak — это раннее имя Java." },
+    { q: "Как называется стандарт, на котором основан JavaScript?",
+      a: ["ISO C++", "W3C DOM", "ECMAScript", "POSIX"], c: 2,
+      e: "Спецификация языка называется ECMAScript (ECMA-262). JavaScript — самая известная её реализация." },
+    { q: "Какая модель объектно-ориентированного программирования лежит в основе JavaScript?",
+      a: ["Классическая на основе шаблонов C++", "Только функциональная без объектов", "Прототипная", "Табличная"], c: 2,
+      e: "Объекты в JavaScript наследуют свойства от других объектов через цепочку прототипов. Ключевое слово <code>class</code> — лишь удобный синтаксис поверх прототипов." },
+    { q: "Какая типизация используется в JavaScript?",
+      a: ["Статическая сильная", "Динамическая слабая", "Типов нет вообще", "Только явная статическая"], c: 1,
+      e: "Тип связан со значением, а не с переменной, и типы могут неявно приводиться друг к другу (например, <code>\"5\" * 2</code> даёт <code>10</code>)." },
+    { q: "Как называется JavaScript-движок в браузере Google Chrome?",
+      a: ["SpiderMonkey", "Chakra", "V8", "Nitro"], c: 2,
+      e: "V8 разработан Google и используется в Chrome, а также в Node.js." },
+    { q: "Какая платформа позволила запускать JavaScript на сервере и создана Райаном Далом в 2009 году?",
+      a: ["Deno Classic", "Node.js", "Rhino", "Apache Tomcat"], c: 1,
+      e: "Node.js построен на движке V8 и использует событийную неблокирующую модель ввода-вывода." },
+    { q: "Что означает аббревиатура JSON?",
+      a: ["Java Standard Object Notation", "JavaScript Object Notation", "JavaScript Online Network", "Joint Script Object Node"], c: 1,
+      e: "JSON — текстовый формат обмена данными, основанный на синтаксисе литералов объектов JavaScript." },
+    { q: "Что вернёт выражение <code>typeof null</code>?",
+      a: ["\"null\"", "\"undefined\"", "\"object\"", "\"number\""], c: 2,
+      e: "Это известная историческая особенность языка: <code>typeof null</code> возвращает <code>\"object\"</code>, хотя null — примитивное значение." },
+    { q: "Что из перечисленного НЕ является примитивным типом данных в JavaScript?",
+      a: ["string", "boolean", "symbol", "Array"], c: 3,
+      e: "Массив (<code>Array</code>) — это объект. Примитивы: string, number, bigint, boolean, undefined, null, symbol." },
+    { q: "Какое из этих ключевых слов НЕ используется для объявления переменной в JavaScript?",
+      a: ["let", "const", "var", "int"], c: 3,
+      e: "Переменные объявляются через <code>var</code>, <code>let</code> и <code>const</code>. Слова <code>int</code> в языке нет, тип указывать не нужно." },
+    { q: "Какой оператор сравнивает значения без приведения типов?",
+      a: ["==", "=", "===", "=>"], c: 2,
+      e: "<code>===</code> — строгое равенство: сравнивает и значение, и тип. Оператор <code>==</code> сначала приводит типы." },
+    { q: "Как называется JavaScript-движок браузера Firefox?",
+      a: ["V8", "SpiderMonkey", "JavaScriptCore", "Trident"], c: 1,
+      e: "SpiderMonkey — первый в истории движок JavaScript, его написал сам Брендан Эйх. JavaScriptCore используется в Safari." },
+    { q: "Как связаны JavaScript и Java?",
+      a: ["JavaScript — упрощённая версия Java", "Это один и тот же язык", "Java — это подмножество JavaScript", "Это разные языки, сходство названий — маркетинговое решение"], c: 3,
+      e: "Язык получил название JavaScript из-за популярности Java в то время. Синтаксис, модель выполнения и назначение у них различаются." },
+    { q: "Какая версия ECMAScript принесла <code>let</code>, <code>const</code>, стрелочные функции и классы?",
+      a: ["ES3 (1999)", "ES5 (2009)", "ES6 / ES2015", "ES2025"], c: 2,
+      e: "ES2015 (ES6) стала крупнейшим обновлением языка. С тех пор новые версии стандарта выходят ежегодно." },
+    { q: "Какие средства появились в JavaScript для работы с асинхронным кодом?",
+      a: ["Только потоки POSIX", "Колбэки, Promise и async/await", "Только оператор goto", "Исключительно XML-запросы"], c: 1,
+      e: "Асинхронность выражается через функции обратного вызова, объекты <code>Promise</code> и синтаксис <code>async</code>/<code>await</code>." },
+    { q: "Что означает аббревиатура DOM?",
+      a: ["Document Object Model", "Data Object Module", "Dynamic Output Method", "Display Order Mode"], c: 0,
+      e: "DOM — объектная модель документа: через неё JavaScript читает и изменяет структуру HTML-страницы." },
+    { q: "Как называется язык-надмножество JavaScript от Microsoft, добавляющий статическую типизацию?",
+      a: ["CoffeeScript", "Dart", "Elm", "TypeScript"], c: 3,
+      e: "TypeScript компилируется в обычный JavaScript и добавляет к нему необязательные аннотации типов." },
+    { q: "Как выполняется JavaScript-код в одном потоке и как он обрабатывает события?",
+      a: ["Через цикл событий (event loop)", "Каждая функция запускается в новом процессе", "Только компиляцией в машинный код до запуска", "Через ручное управление памятью"], c: 0,
+      e: "Основной поток выполняет код по очереди, а цикл событий берёт следующие задачи из очереди, когда стек вызовов освобождается." }
+  ];
+
+  var app = document.getElementById("app");
+  var state;
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function prepare() {
+    return QUESTIONS.map(function (item) {
+      var opts = item.a.map(function (text, i) { return { text: text, right: i === item.c }; });
+      return { q: item.q, e: item.e, opts: shuffle(opts) };
+    });
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch];
+    });
+  }
+
+  function newGame() {
+    state = { qs: prepare(), i: 0, score: 0, picked: null, results: [], wrong: [] };
+  }
+
+  function progressHTML() {
+    var h = '<div class="progress" style="grid-template-columns:repeat(' + state.qs.length + ',1fr)" role="img" aria-label="Прогресс: ' + state.i + ' из ' + state.qs.length + '">';
+    for (var k = 0; k < state.qs.length; k++) {
+      var cls = "";
+      if (k < state.results.length) cls = state.results[k] ? "ok" : "bad";
+      else if (k === state.i) cls = "now";
+      h += '<i class="' + cls + '"></i>';
+    }
+    return h + "</div>";
+  }
+
+  function renderStart() {
+    app.innerHTML =
+      '<section class="card start">' +
+      '<p class="verdict">Проверьте, что вы знаете о JavaScript</p>' +
+      '<p style="margin:0;color:var(--muted)">История, стандарты, типы данных, движки и экосистема языка.</p>' +
+      '<ul><li>20 вопросов, у каждого 4 варианта ответа</li>' +
+      '<li>После ответа видно, правильный ли он, и почему</li>' +
+      '<li>Порядок вариантов перемешивается при каждом запуске</li></ul>' +
+      '<button class="btn" id="go">Начать тест</button>' +
+      '<p class="hint">Совет: выбирать ответы можно клавишами 1–4, а переходить дальше клавишей Enter.</p>' +
+      "</section>";
+    document.getElementById("go").onclick = function () { newGame(); renderQuestion(); };
+  }
+
+  function renderQuestion() {
+    var q = state.qs[state.i];
+    var answered = state.picked !== null;
+    var h = progressHTML();
+    h += '<div class="meta"><span>Вопрос ' + (state.i + 1) + " из " + state.qs.length + "</span><span>Верно: " + state.score + "</span></div>";
+    h += '<section class="card"><h2 class="question">' + q.q + "</h2>";
+    h += '<ul class="options">';
+    q.opts.forEach(function (o, idx) {
+      var cls = "opt";
+      if (answered) {
+        if (o.right) cls += " ok";
+        else if (idx === state.picked) cls += " bad";
+        else cls += " dim";
+      }
+      h += '<li><button class="' + cls + '" data-i="' + idx + '"' + (answered ? " disabled" : "") + ">" +
+           '<span class="n">' + (idx + 1) + "</span><span>" + esc(o.text) + "</span></button></li>";
+    });
+    h += "</ul>";
+    if (answered) {
+      var good = q.opts[state.picked].right;
+      h += '<div class="expl" role="status"><b>' + (good ? "Верно" : "Неверно") + "</b>" + q.e + "</div>";
+      h += '<div class="actions"><button class="btn" id="next">' +
+           (state.i === state.qs.length - 1 ? "Показать результат" : "Следующий вопрос") + "</button></div>";
+    }
+    h += "</section>";
+    app.innerHTML = h;
+
+    if (!answered) {
+      app.querySelectorAll(".opt").forEach(function (b) {
+        b.onclick = function () { choose(parseInt(b.getAttribute("data-i"), 10)); };
+      });
+    } else {
+      var next = document.getElementById("next");
+      next.onclick = goNext;
+      next.focus({ preventScroll: true });
+    }
+  }
+
+  function choose(idx) {
+    if (state.picked !== null) return;
+    var q = state.qs[state.i];
+    var good = q.opts[idx].right;
+    state.picked = idx;
+    state.results.push(good);
+    if (good) state.score++;
+    else state.wrong.push({ q: q.q, you: q.opts[idx].text, right: q.opts.filter(function (o) { return o.right; })[0].text });
+    renderQuestion();
+  }
+
+  function goNext() {
+    state.picked = null;
+    state.i++;
+    if (state.i >= state.qs.length) renderResult();
+    else { renderQuestion(); window.scrollTo(0, 0); }
+  }
+
+  function verdict(p) {
+    if (p === 100) return "Безупречно. Вы знаете JavaScript на отлично.";
+    if (p >= 80) return "Отличный результат.";
+    if (p >= 60) return "Хорошо, но есть что повторить.";
+    if (p >= 40) return "Неплохое начало. Загляните в разбор ошибок.";
+    return "Стоит изучить тему подробнее и попробовать снова.";
+  }
+
+  function renderResult() {
+    var total = state.qs.length;
+    var pct = Math.round(state.score / total * 100);
+    var h = progressHTML();
+    h += '<section class="card"><p class="big">' + state.score + "<span> / " + total + "</span></p>";
+    h += '<p class="verdict">' + verdict(pct) + "</p>";
+    h += '<p style="margin:0;color:var(--muted)">Правильных ответов: ' + pct + "%</p>";
+    if (state.wrong.length) {
+      h += '<ul class="review">';
+      state.wrong.forEach(function (w) {
+        h += "<li><div>" + w.q + '</div><div class="you">Ваш ответ: ' + esc(w.you) + '</div><div class="right">Правильно: ' + esc(w.right) + "</div></li>";
+      });
+      h += "</ul>";
+    }
+    h += '<div class="row"><button class="btn" id="again">Пройти заново</button>';
+    if (state.wrong.length) h += '<button class="btn ghost" id="retry">Повторить только ошибки</button>';
+    h += "</div></section>";
+    app.innerHTML = h;
+    window.scrollTo(0, 0);
+    document.getElementById("again").onclick = function () { newGame(); renderQuestion(); };
+    var r = document.getElementById("retry");
+    if (r) r.onclick = retryWrong;
+  }
+
+  function retryWrong() {
+    var wrongTexts = state.wrong.map(function (w) { return w.q; });
+    var qs = state.qs.filter(function (q) { return wrongTexts.indexOf(q.q) !== -1; });
+    qs = qs.map(function (q) { return { q: q.q, e: q.e, opts: shuffle(q.opts) }; });
+    state = { qs: qs, i: 0, score: 0, picked: null, results: [], wrong: [] };
+    renderQuestion();
+  }
+
+  document.addEventListener("keydown", function (e) {
+    if (!state || !document.querySelector(".options")) return;
+    if (state.picked === null && e.key >= "1" && e.key <= "4") {
+      choose(parseInt(e.key, 10) - 1);
+    } else if (state.picked !== null && e.key === "Enter") {
+      var n = document.getElementById("next");
+      if (n && document.activeElement !== n) { e.preventDefault(); goNext(); }
+    }
+  });
+
+  renderStart();
+})();
+</script>
+</body>
+</html>
